@@ -1,15 +1,13 @@
 package model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * empresa
  */
 public class Empresa {
 
-    HashMap<String, Empleado> empleados;
+    private HashMap<String, Empleado> empleados;
 
     public Empresa() {
 		this.empleados = new HashMap<>();
@@ -24,7 +22,7 @@ public class Empresa {
         return empleados;
     }
 
-    public Empleado getEmpleado(String documento) {
+    public Empleado buscarEmpleado(String documento) {
         return empleados.get(documento);
     }
     

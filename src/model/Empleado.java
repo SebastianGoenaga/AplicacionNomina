@@ -1,10 +1,8 @@
 package model;
 
-import java.sql.Date;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class Empleado {
@@ -14,21 +12,24 @@ public class Empleado {
     private int edad;
     private HashMap<Date, Float> salarioHistorial = new HashMap<>();
     private HashMap<Date, HoraTrabajo> horaTrabajo = new HashMap<>();
-    private Set<Deduccion> deducciones = new HashSet<>();
+    private Deduccion deducciones;
     private Set<Categoria> categorias = new HashSet<>();
+    private boolean activo;
 
     public Empleado(String documento, String nombre, int edad) {
         this.documento = documento;
         this.nombre = nombre;
         this.edad = edad;
+        this.activo = true;
+        agregarDeducciones(0, 0, 0);
     }
 
     public void agregarHorasExtras(HoraTrabajo horaTrabajo, Date fecha) {
         this.horaTrabajo.put(fecha, horaTrabajo);
     }
 
-    public void agregarDeduccion(Deduccion deduccion) {
-        this.deducciones.add(deduccion);
+    public void agregarDeducciones(float adicionPension, float adicionSalud, float adicionSaludPensional) {
+        this.deducciones = new Deduccion(adicionPension, adicionSalud, adicionSaludPensional);
     }
 
     public void agregarCategoria(Categoria categoria) {
@@ -46,14 +47,14 @@ public class Empleado {
         // System.out.println(valorHoraEstandar);
 
         float salarioParcial = salario;
-        for (Deduccion deduccion : deducciones) {
-            salario -= salarioParcial * deduccion.porcentaje;
-        }
-
+        salario -= salarioParcial * deducciones.getSalud();
+        salario -= salarioParcial * deducciones.getPension();
+        salario -= salarioParcial * deducciones.getSolidaridadPensional();
+        
         HoraTrabajo horas = horaTrabajo.get(fecha);
-        salario += horas.horasNocturna * ValorHora.VALOR_HORA_NOCTURNA.porcentaje * valorHoraEstandar;
-        salario += horas.horasDominicalDiurna * ValorHora.VALOR_HORA_DOMINICAL_DIURNA.porcentaje * valorHoraEstandar;
-        salario += horas.horasDominicalNocturna * ValorHora.VALOR_HORA_DOMINICAL_NOCTURNA.porcentaje
+        salario += ((horas == null) ? 0 : horas.horasNocturna) * ValorHora.VALOR_HORA_NOCTURNA.porcentaje * valorHoraEstandar;
+        salario += ((horas == null) ? 0 : horas.horasDominicalDiurna) * ValorHora.VALOR_HORA_DOMINICAL_DIURNA.porcentaje * valorHoraEstandar;
+        salario += ((horas == null) ? 0 : horas.horasDominicalNocturna) * ValorHora.VALOR_HORA_DOMINICAL_NOCTURNA.porcentaje
                 * valorHoraEstandar;
 
         salarioHistorial.put(fecha, salario);
@@ -92,12 +93,24 @@ public class Empleado {
         return horaTrabajo;
     }
 
-    public Set<Deduccion> getDeducciones() {
+    public Deduccion getDeducciones() {
         return deducciones;
     }
 
     public Set<Categoria> getCategorias() {
         return categorias;
+    }
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void inhabilitar() {
+        this.activo = false;
+    }
+
+    public void habilitar() {
+        this.activo = true;
     }
 
 }
