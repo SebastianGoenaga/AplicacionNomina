@@ -28,8 +28,8 @@ public class Empleado {
         this.horaTrabajo.put(fecha, horaTrabajo);
     }
 
-    public void agregarDeducciones(float adicionPension, float adicionSalud, float adicionSaludPensional) {
-        this.deducciones = new Deduccion(adicionPension, adicionSalud, adicionSaludPensional);
+    public void agregarDeducciones(float adicionPension, float adicionSalud, float adicionSolidaridadPensional) {
+        this.deducciones = new Deduccion(adicionPension, adicionSalud, adicionSolidaridadPensional);
     }
 
     public void agregarCategoria(Categoria categoria) {
